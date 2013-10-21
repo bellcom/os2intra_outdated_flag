@@ -55,7 +55,7 @@ function os2intra_outdated_flag_menu() {
 function os2intra_outdated_flag_form_validate_field($element, &$form_state) {
   switch ($element['#name']) {
     case 'os2intra_outdated_flag_cron_interval':
-      if (($timestamp = strtotime($element['#value']) === false && $timestamp <= time()) {
+      if (($timestamp = strtotime($element['#value'])) === false || $timestamp <= time()) {
         form_error($element, t('Your interval %format format is incorrect.', array('%format' => $element['#value'])));
       }
       break;
