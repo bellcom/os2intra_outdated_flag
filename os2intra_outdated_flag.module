@@ -87,6 +87,10 @@ function os2intra_outdated_flag_cron()
     // Cron is allowed. Do some processing.
 
     if($flag = flag_get_flag('os2intra_flag_outdated')) {
+
+      // Be sure we have some user. We are cron.
+      $admin = user_load(0);
+
       $query = new EntityFieldQuery();
 
       // Get all nodes which has a field of field_os2intra_outdated_date which
@@ -101,7 +105,7 @@ function os2intra_outdated_flag_cron()
         foreach($result['node'] as $node){
           if (!$flag->is_flagged($node->nid)) {
             // Flag this node if it isnt flagged already.
-            $flag->flag('flag', $node->nid);
+            $flag->flag('flag', $node->nid, $admin, true);
           }
         }
       }
