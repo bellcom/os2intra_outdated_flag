@@ -5,3 +5,111 @@
  */
 
 include_once 'os2intra_outdated_flag.features.inc';
+
+/**
+ * Page callback for settings form.
+ */
+function os2intra_outdated_flag_admin_settings() {
+  $form = array();
+
+  $form['os2intra_outdated_flag_cron_enable'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable auto outdating nodes'),
+    '#default_value' => variable_get('os2intra_outdated_flag_cron_enable', false),
+    '#description' => t("Enable this to automatic autodate nodes which has an expire date."),
+  );
+
+  $form['os2intra_outdated_flag_cron_interval'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Minimum time between cron update'),
+    '#default_value' => variable_get('os2intra_outdated_flag_cron_interval', '+1 week'),
+    '#description' => t('The minimum time between nodes are updated with oudated flags. See %url for format documentation. default is \'+1 week\'', array('%url' => 'http://www.php.net/manual/en/datetime.formats.relative.php')),
+    '#element_validate' => array('os2intra_outdated_flag_form_validate_field'),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_menu().
+ */
+function os2intra_outdated_flag_menu() {
+
+  $items = array();
+
+  $items['admin/config/os2intra_outdated_flag'] = array(
+    'title' => 'OS2intra Outdated Flag settings',
+    'description' => 'Settings regarding th OS2intra outdated flags module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os2intra_outdated_flag_admin_settings'),
+    'access arguments' => array('administer os2intra_outdated_flag settings'),
+    'type' => MENU_NORMAL_ITEM,
+   );
+
+  return $items;
+}
+
+/**
+ * Generic validate callback for the settings fields.
+ */
+function os2intra_outdated_flag_form_validate_field($element, &$form_state) {
+  switch ($element['#name']) {
+    case 'os2intra_outdated_flag_cron_interval':
+      if (($timestamp = strtotime($element['#value'])) === false || $timestamp <= time()) {
+        form_error($element, t('Your interval %format format is incorrect.', array('%format' => $element['#value'])));
+      }
+      break;
+  }
+}
+
+/*
+ * Implements hook_permission().
+ */
+function os2intra_outdated_flag_permission(){
+  return array(
+    'administer os2intra_outdated_flag settings' => array(
+      'title' => t('Administer OS2intra outdated flags module'),
+      'description' => t('Change settings for OS2intra outdated flags module'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_cron().
+ */
+function os2intra_outdated_flag_cron()
+{
+  $time_last_run = variable_get('os2intra_outdated_flag_cron_last_run', 0);
+  $interval = variable_get('os2intra_outdated_flag_cron_interval', '+1 week');
+  $enable = variable_get('os2intra_outdated_flag_cron_enable', false);
+
+  if ($enable && ($time_last_run + strtotime($interval) - time()) <= time()) {
+    // Cron is allowed. Do some processing.
+
+    if($flag = flag_get_flag('os2intra_flag_outdated')) {
+
+      // Be sure we have some user. We are cron.
+      $admin = user_load(0);
+
+      $query = new EntityFieldQuery();
+
+      // Get all nodes which has a field of field_os2intra_outdated_date which
+      // are between last cron run and today.
+      $result = $query
+        ->entityCondition('entity_type', 'node')
+        ->fieldCondition('field_os2intra_outdated_date', 'value', gmdate("Y-m-d H:i:s", $time_last_run), '>=')
+        ->fieldCondition('field_os2intra_outdated_date', 'value', date("Y-m-d H:i:s"), '<=')
+        ->execute();
+
+      if (isset($result['node'])) {
+        foreach($result['node'] as $node){
+          if (!$flag->is_flagged($node->nid)) {
+            // Flag this node if it isnt flagged already.
+            $flag->flag('flag', $node->nid, $admin, true);
+          }
+        }
+      }
+    }
+    variable_set('os2intra_outdated_flag_cron_last_run', time());
+  }
+}

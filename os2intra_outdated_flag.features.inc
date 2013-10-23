@@ -20,13 +20,14 @@ function os2intra_outdated_flag_flag_default_flags() {
   $flags['os2intra_flag_outdated'] = array(
     'content_type' => 'node',
     'title' => 'Forældet',
-    'global' => 0,
+    'global' => 1,
     'types' => array(
       0 => 'group',
       1 => 'os2web_base_contentpage',
-      2 => 'post',
-      3 => 'os2intra_base_page',
-      4 => 'page',
+      2 => 'os2intra_base_page',
+      3 => 'page',
+      4 => 'post',
+      5 => 'os2web_base_iframe',
     ),
     'flag_short' => 'Forældet',
     'flag_long' => 'Angiv dette indhold som at være forældet',
