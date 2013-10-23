@@ -93,7 +93,7 @@ function os2intra_outdated_flag_admin_settings_build($form, &$form_state) {
 
   foreach ($content_types as $content_type) {
     if (isset($content_type) && $content_type !== 0 &&
-        !field_info_instance($content_type, 'field_os2intra_outdated_date', 'os2intra_outdated_flag')) {
+        !field_info_instance('node', 'field_os2intra_outdated_date', $content_type)) {
       $instance = array(
         'field_name' => 'field_os2intra_outdated_date',
         'bundle' => $content_type,
