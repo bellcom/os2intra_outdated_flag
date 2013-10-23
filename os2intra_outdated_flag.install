@@ -39,7 +39,7 @@ function os2intra_outdated_flag_install() {
       'translatable' => 0,
       'type' => 'datetime',
     );
-    $field = field_create_field($field);
+    $field = field_create_field($field['field_os2intra_outdated_date']);
   }
 }
 
