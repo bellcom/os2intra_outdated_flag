@@ -85,24 +85,24 @@ function os2intra_outdated_flag_admin_settings() {
 /**
  * Sublit callback for the admin settings form.
  *
- * Builds all fields on selected content types.
+ * Builds all fields on selected content types. Does NOT remove fields on
+ * content types where expire have been removed.
  */
 function os2intra_outdated_flag_admin_settings_build($form, &$form_state) {
   $content_types = variable_get('os2intra_outdated_flag_content_types_expire_field', array());
 
-  if (!empty($content_types)) {
-    foreach ($content_types as $content_type) {
-      if (!field_info_instance($content_type, 'os2intra_outdated_flag_expire_date', 'os2intra_outdated_flag')) {
-        $instance = array(
-          'field_name' => 'os2intra_outdated_flag_expire_date',
-          'bundle' => 'os2intra_outdated_flag',
-          'entity_type' => $content_type,
-          'label' => t('Expire date'),
-          'description' => t('At this date, the content will be flagged expired.'),
-          'required' => FALSE,
-        );
-        field_create_instance($instance);
-      }
+  foreach ($content_types as $content_type) {
+    if (isset($content_type) && $content_type != 0 &&
+        !field_info_instance($content_type, 'os2intra_outdated_flag_expire_date', 'os2intra_outdated_flag')) {
+      $instance = array(
+        'field_name' => 'os2intra_outdated_flag_expire_date',
+        'bundle' => 'os2intra_outdated_flag',
+        'entity_type' => $content_type,
+        'label' => t('Expire date'),
+        'description' => t('At this date, the content will be flagged expired.'),
+        'required' => FALSE,
+      );
+      field_create_instance($instance);
     }
   }
 }
@@ -173,7 +173,7 @@ function os2intra_outdated_flag_flag_default_flags() {
     ),
     'api_version' => 2,
   );
-
+  return $flags;
 }
 
 /**
