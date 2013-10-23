@@ -15,7 +15,7 @@ function os2intra_outdated_flag_install() {
       'active' => 1,
       'cardinality' => 1,
       'deleted' => 0,
-      'entity_types' => array(),
+      'entity_types' => array('node'),
       'field_name' => 'field_os2intra_outdated_date',
       'foreign keys' => array(),
       'indexes' => array(),

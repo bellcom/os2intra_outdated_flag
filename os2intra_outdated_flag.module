@@ -96,8 +96,8 @@ function os2intra_outdated_flag_admin_settings_build($form, &$form_state) {
         !field_info_instance($content_type, 'field_os2intra_outdated_date', 'os2intra_outdated_flag')) {
       $instance = array(
         'field_name' => 'field_os2intra_outdated_date',
-        'bundle' => 'os2intra_outdated_flag',
-        'entity_type' => $content_type,
+        'bundle' => $content_type,
+        'entity_type' => 'node',
         'label' => t('Expire date'),
         'description' => t('At this date, the content will be flagged expired.'),
         'required' => FALSE,
