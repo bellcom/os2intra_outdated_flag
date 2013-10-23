@@ -15,7 +15,7 @@ function os2intra_outdated_flag_admin_settings() {
   $form['os2intra_outdated_flag_cron_enable'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable auto outdating nodes'),
-    '#default_value' => variable_get('os2intra_outdated_flag_cron_enable', false),
+    '#default_value' => variable_get('os2intra_outdated_flag_cron_enable', FALSE),
     '#description' => t("Enable this to automatic autodate nodes which has an expire date."),
   );
 
@@ -23,8 +23,38 @@ function os2intra_outdated_flag_admin_settings() {
     '#type' => 'textfield',
     '#title' => t('Minimum time between cron update'),
     '#default_value' => variable_get('os2intra_outdated_flag_cron_interval', '+1 week'),
-    '#description' => t('The minimum time between nodes are updated with oudated flags. See %url for format documentation. default is \'+1 week\'', array('%url' => 'http://www.php.net/manual/en/datetime.formats.relative.php')),
+    '#description' => t("The minimum time between nodes are updated with oudated flags. See %url for format documentation. default is '+1 week'", array('%url' => 'http://www.php.net/manual/en/datetime.formats.relative.php')),
     '#element_validate' => array('os2intra_outdated_flag_form_validate_field'),
+  );
+
+  // Make an list of content types to select.
+  $content_types = node_type_get_types();
+
+  $form['vertical_settings_tab'] = array(
+    '#type' => 'vertical_tabs',
+    '#weight' => 0,
+  );
+  // Form element. It's a fieldset , "Toggle display"
+  $form['os2intra_outdated_flag_content_types'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Content Types'),
+    '#collapsible' => TRUE,
+    '#group' => 'vertical_settings_tab',
+  );
+
+  $checkbox_instances = array();
+
+  foreach ($content_types as $content_type) {
+    $checkbox_instances[$content_type->type] = $content_type->name;
+  }
+
+  $form['os2intra_outdated_flag_content_types']['os2intra_outdated_flag_content_types_expire_field'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Choose content types which can be flagged expired'),
+    '#options' => $checkbox_instances,
+    '#description' => t('Check or uncheck the respective fields'),
+    '#default_value' => variable_get('os2intra_outdated_flag_content_types_expire_field', array()),
+    '#group' => 'vertical_settings_tab',
   );
 
   return system_settings_form($form);
@@ -44,7 +74,7 @@ function os2intra_outdated_flag_menu() {
     'page arguments' => array('os2intra_outdated_flag_admin_settings'),
     'access arguments' => array('administer os2intra_outdated_flag settings'),
     'type' => MENU_NORMAL_ITEM,
-   );
+  );
 
   return $items;
 }
@@ -55,7 +85,7 @@ function os2intra_outdated_flag_menu() {
 function os2intra_outdated_flag_form_validate_field($element, &$form_state) {
   switch ($element['#name']) {
     case 'os2intra_outdated_flag_cron_interval':
-      if (($timestamp = strtotime($element['#value'])) === false || $timestamp <= time()) {
+      if (($timestamp = strtotime($element['#value'])) === FALSE || $timestamp <= time()) {
         form_error($element, t('Your interval %format format is incorrect.', array('%format' => $element['#value'])));
       }
       break;
@@ -65,7 +95,7 @@ function os2intra_outdated_flag_form_validate_field($element, &$form_state) {
 /*
  * Implements hook_permission().
  */
-function os2intra_outdated_flag_permission(){
+function os2intra_outdated_flag_permission() {
   return array(
     'administer os2intra_outdated_flag settings' => array(
       'title' => t('Administer OS2intra outdated flags module'),
@@ -77,16 +107,15 @@ function os2intra_outdated_flag_permission(){
 /**
  * Implements hook_cron().
  */
-function os2intra_outdated_flag_cron()
-{
+function os2intra_outdated_flag_cron() {
   $time_last_run = variable_get('os2intra_outdated_flag_cron_last_run', 0);
   $interval = variable_get('os2intra_outdated_flag_cron_interval', '+1 week');
-  $enable = variable_get('os2intra_outdated_flag_cron_enable', false);
+  $enable = variable_get('os2intra_outdated_flag_cron_enable', FALSE);
 
   if ($enable && ($time_last_run + strtotime($interval) - time()) <= time()) {
-    // Cron is allowed. Do some processing.
 
-    if($flag = flag_get_flag('os2intra_flag_outdated')) {
+    // Cron is allowed. Do some processing.
+    if ($flag = flag_get_flag('os2intra_flag_outdated')) {
 
       // Be sure we have some user. We are cron.
       $admin = user_load(0);
@@ -102,10 +131,10 @@ function os2intra_outdated_flag_cron()
         ->execute();
 
       if (isset($result['node'])) {
-        foreach($result['node'] as $node){
+        foreach ($result['node'] as $node) {
           if (!$flag->is_flagged($node->nid)) {
             // Flag this node if it isnt flagged already.
-            $flag->flag('flag', $node->nid, $admin, true);
+            $flag->flag('flag', $node->nid, $admin, TRUE);
           }
         }
       }
