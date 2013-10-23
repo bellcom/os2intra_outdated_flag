@@ -11,12 +11,12 @@
 function os2intra_outdated_flag_install() {
 
   if (!field_info_field('field_os2intra_outdated_date')) {
-    $field['os2intra_outdated_flag_expire_date'] = array(
+    $field['field_os2intra_outdated_date'] = array(
       'active' => 1,
       'cardinality' => 1,
       'deleted' => 0,
       'entity_types' => array(),
-      'field_name' => 'os2intra_outdated_flag_expire_date',
+      'field_name' => 'field_os2intra_outdated_date',
       'foreign keys' => array(),
       'indexes' => array(),
       'locked' => 0,
@@ -52,5 +52,5 @@ function os2intra_outdated_flag_uninstall() {
   variable_del('os2intra_outdated_flag_cron_enable');
   variable_del('os2intra_outdated_flag_content_types_expire_field');
 
-  field_delete_field('os2intra_outdated_flag_expire_date');
+  field_delete_field('field_os2intra_outdated_date');
 }
