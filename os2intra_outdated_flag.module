@@ -129,13 +129,19 @@ function os2intra_outdated_flag_flag_default_flags() {
   // can be flagged expired.
   $content_types = variable_get('os2intra_outdated_flag_content_types_expire_field', array());
 
+  $enabled_types = array();
+  foreach ($content_types as $content_type) {
+    if (isset($content_type) && $content_type !== 0) {
+      $enabled_types[$content_type] = $content_type;
+    }
+  }
   $flags = array();
   // Exported flag: "Forældet".
   $flags['os2intra_flag_outdated'] = array(
     'content_type' => 'node',
     'title' => t('Forældet'),
     'global' => 1,
-    'types' => array_keys($content_types),
+    'types' => $enabled_types,
     'flag_short' => t('Forældet'),
     'flag_long' => t('Angiv dette indhold som at være forældet'),
     'flag_message' => t('Indhold er angivet som forældet.'),
