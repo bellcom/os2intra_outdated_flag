@@ -27,6 +27,7 @@ function os2intra_outdated_flag_flag_default_flags() {
       2 => 'os2intra_base_page',
       3 => 'page',
       4 => 'post',
+      5 => 'os2web_base_iframe',
     ),
     'flag_short' => 'Forældet',
     'flag_long' => 'Angiv dette indhold som at være forældet',

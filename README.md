@@ -16,5 +16,9 @@ admin/config/os2intra_outdated_flag
 Todo
 ----
 
-- Make it possible to not depend on field instance.
 - Make an admin interface to choose which contenttypes has an expire date field.
+  It could either be an expire field, or a general setting like how the
+  [scheduler](http://drupalcode.org/project/scheduler.git/blob/557611ca1bd0770084eab1af5f3d58654e59a17e:/scheduler.module#l264) does it.
+  Needs to automatically add bundles to the flag aswell. https://drupal.org/node/305086#default-flags.
+
+- Make it possible to not depend on field instance.
