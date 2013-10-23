@@ -18,3 +18,4 @@ Todo
 
 - Make it possible to not depend on field instance.
 - Make an admin interface to choose which contenttypes has an expire date field.
+  Needs to automatically add bundles to the flag aswell. https://drupal.org/node/305086#default-flags
