@@ -7,6 +7,25 @@
 include_once 'os2intra_outdated_flag.features.inc';
 
 /**
+ * Implements hook_menu().
+ */
+function os2intra_outdated_flag_menu() {
+
+  $items = array();
+
+  $items['admin/config/os2intra_outdated_flag'] = array(
+    'title' => 'OS2intra Outdated Flag settings',
+    'description' => 'Settings regarding th OS2intra outdated flags module',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('os2intra_outdated_flag_admin_settings'),
+    'access arguments' => array('administer os2intra_outdated_flag settings'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
  * Page callback for settings form.
  */
 function os2intra_outdated_flag_admin_settings() {
@@ -57,26 +76,35 @@ function os2intra_outdated_flag_admin_settings() {
     '#group' => 'vertical_settings_tab',
   );
 
-  return system_settings_form($form);
+  $form = system_settings_form($form);
+  $form['#submit'][] = 'os2intra_outdated_flag_admin_settings_build';
+
+  return $form;
 }
 
 /**
- * Implements hook_menu().
+ * Sublit callback for the admin settings form.
+ *
+ * Builds all fields on selected content types.
  */
-function os2intra_outdated_flag_menu() {
+function os2intra_outdated_flag_admin_settings_build($form, &$form_state) {
+  $content_types = variable_get('os2intra_outdated_flag_content_types_expire_field', array());
 
-  $items = array();
-
-  $items['admin/config/os2intra_outdated_flag'] = array(
-    'title' => 'OS2intra Outdated Flag settings',
-    'description' => 'Settings regarding th OS2intra outdated flags module',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('os2intra_outdated_flag_admin_settings'),
-    'access arguments' => array('administer os2intra_outdated_flag settings'),
-    'type' => MENU_NORMAL_ITEM,
-  );
-
-  return $items;
+  if (!empty($content_types)) {
+    foreach ($content_types as $content_type) {
+      if (!field_info_instance($content_type, 'os2intra_outdated_flag_expire_date', 'os2intra_outdated_flag')) {
+        $instance = array(
+          'field_name' => 'os2intra_outdated_flag_expire_date',
+          'bundle' => 'os2intra_outdated_flag',
+          'entity_type' => $content_type,
+          'label' => t('Expire date'),
+          'description' => t('At this date, the content will be flagged expired.'),
+          'required' => FALSE,
+        );
+        field_create_instance($instance);
+      }
+    }
+  }
 }
 
 /**
@@ -92,7 +120,57 @@ function os2intra_outdated_flag_form_validate_field($element, &$form_state) {
   }
 }
 
-/*
+/**
+ * Implements hook_flag_default_flags().
+ */
+function os2intra_outdated_flag_flag_default_flags() {
+
+  // Find all content types which can expire. These are the same as types which
+  // can be flagged expired.
+  $content_types = variable_get('os2intra_outdated_flag_content_types_expire_field', array());
+
+  $flags = array();
+  // Exported flag: "Forældet".
+  $flags['os2intra_flag_outdated'] = array(
+    'content_type' => 'node',
+    'title' => t('Forældet'),
+    'global' => 1,
+    'types' => array_keys($content_types),
+    'flag_short' => t('Forældet'),
+    'flag_long' => t('Angiv dette indhold som at være forældet'),
+    'flag_message' => t('Indhold er angivet som forældet.'),
+    'unflag_short' => t('Ikke forældet'),
+    'unflag_long' => t('Angives dette indhold til at være ikke forældet.'),
+    'unflag_message' => t('Indhold angivet som ikke forældet.'),
+    'unflag_denied_text' => '',
+    'link_type' => 'toggle',
+    'roles' => array(
+      'flag' => array(
+        0 => 2,
+        1 => 3,
+      ),
+      'unflag' => array(
+        0 => 2,
+        1 => 3,
+      ),
+    ),
+    'weight' => 0,
+    'show_on_form' => 0,
+    'access_author' => 'others',
+    'show_on_page' => 1,
+    'show_on_teaser' => 0,
+    'show_contextual_link' => 0,
+    'i18n' => 0,
+    'module' => 'os2intra_outdated_flag',
+    'locked' => array(
+      0 => 'name',
+    ),
+    'api_version' => 2,
+  );
+
+}
+
+/**
  * Implements hook_permission().
  */
 function os2intra_outdated_flag_permission() {
