@@ -10,91 +10,67 @@
 function os2intra_outdated_flag_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-os2intra_base_page-body'
-  $field_instances['node-os2intra_base_page-body'] = array(
+  // Exported field_instance: 'node-os2intra_base_page-field_os2intra_outdated_date'
+  $field_instances['node-os2intra_base_page-field_os2intra_outdated_date'] = array(
     'bundle' => 'os2intra_base_page',
-    'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 0,
+        'label' => 'above',
+        'module' => 'date',
+        'settings' => array(
+          'format_type' => 'long',
+          'fromto' => 'both',
+          'multiple_from' => '',
+          'multiple_number' => '',
+          'multiple_to' => '',
+        ),
+        'type' => 'date_default',
+        'weight' => 7,
       ),
       'print' => array(
-        'label' => 'hidden',
-        'module' => 'text',
+        'label' => 'above',
         'settings' => array(),
-        'type' => 'text_default',
+        'type' => 'hidden',
         'weight' => 0,
       ),
       'teaser' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(
-          'trim_length' => 600,
-        ),
-        'type' => 'text_summary_or_trimmed',
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'body',
-    'label' => 'Tekst',
-    'required' => 0,
+    'field_name' => 'field_os2intra_outdated_date',
+    'label' => 'Forældet dato',
+    'required' => FALSE,
     'settings' => array(
-      'better_formats' => array(
-        'allowed_formats' => array(
-          'blokindhold' => 0,
-          'filtered_html' => 'filtered_html',
-          'full_html' => 0,
-          'plain_text' => 0,
-          'raw' => 0,
-        ),
-        'allowed_formats_toggle' => 1,
-        'default_order_toggle' => 0,
-        'default_order_wrapper' => array(
-          'formats' => array(
-            'blokindhold' => array(
-              'weight' => -7,
-            ),
-            'filtered_html' => array(
-              'weight' => 0,
-            ),
-            'full_html' => array(
-              'weight' => 1,
-            ),
-            'plain_text' => array(
-              'weight' => -8,
-            ),
-            'raw' => array(
-              'weight' => 0,
-            ),
-          ),
-        ),
-      ),
-      'display_summary' => 0,
-      'text_processing' => 1,
+      'default_value' => 'now',
+      'default_value2' => 'same',
+      'default_value_code' => '',
+      'default_value_code2' => '',
       'user_register_form' => FALSE,
     ),
     'widget' => array(
-      'active' => 1,
-      'module' => 'text',
+      'module' => 'date',
       'settings' => array(
-        'rows' => 40,
-        'summary_rows' => 5,
+        'increment' => 15,
+        'input_format' => 'm/d/Y - H:i:s',
+        'input_format_custom' => '',
+        'label_position' => 'above',
+        'text_parts' => array(),
+        'year_range' => '-3:+3',
       ),
-      'type' => 'text_textarea_with_summary',
-      'weight' => 1,
+      'type' => 'date_popup',
+      'weight' => 13,
     ),
   );
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Tekst');
+  t('Forældet dato');
 
   return $field_instances;
 }
