@@ -101,6 +101,13 @@ function os2intra_outdated_flag_admin_settings_build($form, &$form_state) {
         'label' => t('Expire date'),
         'description' => t('At this date, the content will be flagged expired.'),
         'required' => FALSE,
+        'settings' => array(
+          'default_value' => 'blank',
+          'default_value2' => 'same',
+          'default_value_code' => '',
+          'default_value_code2' => '',
+          'user_register_form' => FALSE,
+        ),
       );
       field_create_instance($instance);
     }
